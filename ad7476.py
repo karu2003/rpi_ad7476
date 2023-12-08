@@ -17,7 +17,7 @@ class ad7476a(rx, context_manager):
             URI of IIO context with AD7476a
     """
     _complex_data = False
-    _rx_channel_names = ["raw"]
+    _rx_channel_names = ["voltage0"]
     # _rx_channel_names: List[str] = []
     _device_name = ""
 
