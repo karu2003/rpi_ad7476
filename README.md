@@ -1,9 +1,13 @@
-## Raspberry pi x64
+## Build driver AD7476 for Raspberry Pi x64.
+
+    git clone https://github.com/karu2003/rpi_ad7476
+    cd rpi_ad7476
+    git clone --depth=1 https://github.com/raspberrypi/linux
+
 ### Build Docker
 
     docker build . -t rpi
     docker run --rm -it -v `pwd`:/rpi rpi:latest bash
-    git clone --depth=1 https://github.com/raspberrypi/linux
 
 ### in Docker
 
@@ -42,6 +46,11 @@
     dtoverlay=rpi-ad7476a-overlay
     initramfs initrd.img-6.1.65-v8+ followkernel
 
+    sudo reboot
+
+### ADC testing
+
+    cat /sys/bus/iio/devices/iio\:device0/name
     cat /sys/bus/iio/devices/iio\:device0/in_voltage0_raw 
     cat /sys/bus/iio/devices/iio\:device0/in_voltage_scale
 
