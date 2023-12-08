@@ -20,7 +20,7 @@ class ad7476a(attribute, context_manager):
         context_manager.__init__(self, uri, self._device_name)
 
         # Find the main and trigger devices
-        self._ctrl = self._ctx.find_device("ad7476")
+        self._ctrl = self._ctx.find_device("ad7476a")
 
         # Raise an exception if the device isn't found
         if not self._ctrl:
@@ -39,8 +39,8 @@ class ad7476a(attribute, context_manager):
 
 if __name__ == "__main__":
     import ad7476
-    ADC = ad7476.ad7476a(uri="ip:analog")
+    ADC = ad7476.ad7476a("ip:analog.local")
 
-    raw = ADC.raw
+    # raw = ADC.raw
 
-    print(raw)
+    # print(raw)
