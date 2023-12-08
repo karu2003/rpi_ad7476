@@ -58,3 +58,5 @@
     sudo apt install libiio0
     sudo apt install iiod
     sudo apt install python3-libiio
+
+https://github.com/jbeale1/data-remote
