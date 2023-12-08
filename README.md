@@ -54,4 +54,7 @@
     cat /sys/bus/iio/devices/iio\:device0/in_voltage0_raw 
     cat /sys/bus/iio/devices/iio\:device0/in_voltage_scale
 
+    sudo apt install libiio-utils
+    sudo apt install libiio0
+    sudo apt install iiod
     sudo apt install python3-libiio

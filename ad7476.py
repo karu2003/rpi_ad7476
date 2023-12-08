@@ -40,7 +40,4 @@ class ad7476a(attribute, context_manager):
 if __name__ == "__main__":
     import ad7476
     ADC = ad7476.ad7476a("ip:analog.local")
-
-    # raw = ADC.raw
-
-    # print(raw)
+    print(ADC.voltage)
