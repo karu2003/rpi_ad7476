@@ -1,0 +1,48 @@
+## Raspberry pi x64
+### Build Docker
+
+    docker build . -t rpi
+    docker run --rm -it -v `pwd`:/rpi rpi:latest bash
+    git clone --depth=1 https://github.com/raspberrypi/linux
+
+### in Docker
+
+    cd linux
+    make bcm2711_defconfig
+    sed -i 's/# CONFIG_AD7476 is not set/CONFIG_AD7476=m/g' .config
+    make oldconfig -j$(nproc) Image.gz modules dtbs
+    make oldconfig -j$(nproc) modules_install INSTALL_MOD_PATH=deploy
+    exit
+
+### on PC
+
+    cd linux/
+    sudo cp arch/arm64/boot/Image.gz /media/andrew/bootfs/kernel8.img 
+    sudo cp arch/arm64/boot/dts/broadcom/*.dtb /media/andrew/bootfs/
+    sudo cp arch/arm64/boot/dts/overlays/*.dtb* /media/andrew/bootfs/overlays/
+    sudo cp -ar deploy/lib/modules/6.1.65-v8+/ /media/andrew/rootfs/lib/modules/
+
+    copy rpi-ad7476a-overlay.dts to RPi
+
+### on RPi
+
+    find /lib/modules | grep ad74
+    sudo modprobe ad7476
+    lsmod | grep ad74
+    echo ad7476 | sudo tee -a /etc/modules
+    sudo depmod
+
+    dtc -I dts -O dtb rpi-ad7476a-overlay.dts -o rpi-ad7476a-overlay.dtbo
+    sudo cp rpi-ad7476a-overlay.dtbo /boot/overlays/
+
+    sudo update-initramfs -c -k $(uname -r)
+
+    add to config.txt
+
+    dtoverlay=rpi-ad7476a-overlay
+    initramfs initrd.img-6.1.65-v8+ followkernel
+
+    cat /sys/bus/iio/devices/iio\:device0/in_voltage0_raw 
+    cat /sys/bus/iio/devices/iio\:device0/in_voltage_scale
+
+    sudo apt install python3-libiio
