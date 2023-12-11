@@ -59,4 +59,14 @@
     sudo apt install iiod
     sudo apt install python3-libiio
 
+    modprobe iio_trig_sysfs
+    cd /sys/bus/iio/devices/iio_sysfs_trigger
+    echo 123 > add_trigger
+    cd /sys/bus/iio/devices/trigger0
+    cat name # should give sysfstrig123
+    cd /sys/bus/iio/devices/iio:device0
+    echo sysfstrig123 > trigger/current_trigger
+    echo 1 > scan_elements/in_voltage0_en
+    echo 1 > buffer/enable
+
 https://github.com/jbeale1/data-remote

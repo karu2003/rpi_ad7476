@@ -19,8 +19,13 @@ class ad7476a(rx, context_manager):
     _device_name = ""
 
     def __init__(self, uri="", device_name=""):
+                
+        # context_manager.__init__(self, uri, self._device_name)
         
-        context_manager.__init__(self, uri, self._device_name)
+        if uri == "local": 
+            self._ctx = iio.LocalContext()
+        else:
+            self._ctx = iio.Context()
 
         compatible_parts = ["ad7476", "ad7476a"]
 
@@ -49,8 +54,8 @@ class ad7476a(rx, context_manager):
 
         rx.__init__(self)
 
-        print(self._rx_channel_names)
-        print(self.channel)
+        # print(self._rx_channel_names)
+        # print(self.channel)
 
     class _channel(attribute):
         """ AD7476 channel """
@@ -86,9 +91,11 @@ if __name__ == "__main__":
     target_device = "ad7476a"
     samples = 100
     ad_channel = 1 
-    ADC = ad7476.ad7476a("ip:analog.local",target_device)
+    # ADC = ad7476.ad7476a("ip:analog.local",target_device)
+    ADC = ad7476.ad7476a("local",target_device)
     ADC.rx_enabled_channels = [ad_channel]
     ADC.rx_buffer_size = samples
+    # print(ADC.channel[ad_channel].raw)
     data = ADC.rx()
     # dev = ctx.find_device(target_device)
     # buf = iio.Buffer(dev, samples)
