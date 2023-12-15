@@ -120,7 +120,10 @@ class ad7476a(rx, context_manager):
 
     @sample_rate.setter
     def sample_rate(self, value):
-        os.write(os.open(self.trigger_dir, os.O_RDWR), str(value).encode())
+        if value > self.max_sample_rate:
+            os.write(os.open(self.trigger_dir, os.O_RDWR), str(self.max_sample_rate).encode())
+        else:    
+            os.write(os.open(self.trigger_dir, os.O_RDWR), str(value).encode())
 
     # @property
     # def raw(self):
@@ -152,14 +155,14 @@ if __name__ == "__main__":
     ad_channel = 1
     ADC = ad7476.ad7476a("local:", target_device, "trigger0")
     ADC._rx_data_type = np.int32
-    ADC._ctx.set_timeout(10000)
-    ADC._rx_data_type = np.int16
+    # ADC._ctx.set_timeout(10000)
+    # ADC._rx_data_type = np.int16
     ADC.rx_output_type = "SI"
     ADC.rx_enabled_channels = [ad_channel]
     ADC.rx_buffer_size = samples
-    print(ADC.channel[ad_channel].raw)
+    # print(ADC.channel[ad_channel].raw)
     print(ADC.sample_rate)
-    ADC.sample_rate = 100000.0
+    ADC.sample_rate = 1000000.0
     data = ADC.rx()
     print(data)
-    print(ADC.voltage)
+    # print(ADC.voltage)
