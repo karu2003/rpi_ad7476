@@ -1,0 +1,5 @@
+#KERNEL=="hrtimer", SUBSYSTEM=="iio", GROUP="iio", ACTION=="add", PROGRAM="/bin/sh -cx 'chgrp -R iio /sys%p; chmod -R g=u /sys%p'"
+KERNEL=="iio:device[0-9]*", SUBSYSTEM=="iio", GROUP="iio", ACTION=="add", PROGRAM="/bin/sh -cx 'chgrp -R iio /sys%p; chmod -R g=u /sys%p'"
+#DEVPATH=="/devices/iio_sysfs_trigger", SUBSYSTEM=="iio", GROUP="iio", ACTION=="add", PROGRAM="/bin/sh -cx 'chgrp -R iio /sys%p /dev/iio:device*; chmod -R g=u /sys%p'"
+DEVPATH=="/module/industrialio_configfs", SUBSYSTEM=="module", GROUP="iio", ACTION=="add", PROGRAM="/bin/sh -cx 'chgrp -R iio /sys/kernel/config/iio; chmod -R g=u /sys/kernel/config/iio'"
+DEVPATH=="/devices/trigger*", SUBSYSTEM=="iio", GROUP="iio", ACTION=="add", PROGRAM="/bin/sh -cx 'chgrp -R iio /sys%p /sys/bus/iio/devices/trigger0 ; chmod -R g=u /sys%p /sys/bus/iio/devices/trigger0'"

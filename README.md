@@ -34,6 +34,8 @@
     sudo modprobe ad7476
     lsmod | grep ad74
     echo ad7476 | sudo tee -a /etc/modules
+    echo iio_trig_sysfs | sudo tee -a /etc/modules
+    echo industrialio-buffer-dma | sudo tee -a /etc/modules
     sudo depmod
 
     dtc -I dts -O dtb rpi-ad7476a-overlay.dts -o rpi-ad7476a-overlay.dtbo
@@ -60,13 +62,33 @@
     sudo apt install python3-libiio
 
     modprobe iio_trig_sysfs
+
     cd /sys/bus/iio/devices/iio_sysfs_trigger
     echo 123 > add_trigger
+
     cd /sys/bus/iio/devices/trigger0
-    cat name # should give sysfstrig123
+    cat name # should give sysfstrig123    
+
     cd /sys/bus/iio/devices/iio:device0
     echo sysfstrig123 > trigger/current_trigger
+
     echo 1 > scan_elements/in_voltage0_en
     echo 1 > buffer/enable
 
+    echo 123 > /sys/bus/iio/devices/iio_sysfs_trigger/add_trigger
+
+    #cat /sys/bus/iio/devices/trigger0/name # should give sysfstrig123
+
+    #echo sysfstrig123 > /sys/bus/iio/devices/iio:device0/trigger/current_trigger
+    
+    # TODO fix udev rules for 'iio' group
+    sudo mkdir /sys/kernel/config/iio/triggers/hrtimer/trigger0
+    echo trigger0 > /sys/bus/iio/devices/iio:device0/trigger/current_trigger
+
+    echo 1 > /sys/bus/iio/devices/iio:device0/scan_elements/in_voltage0_en
+    echo 1 > /sys/bus/iio/devices/iio:device0/buffer/enable
+
+
 https://github.com/jbeale1/data-remote
+
+//IIO_WARNING("X7\n");
