@@ -66,12 +66,8 @@
 
 ### Build IIO from git
 
-    git clone https://github.com/analogdevicesinc/libiio
-
+    git clone https://github.com/analogdevicesinc/libiio.git --branch v0.25
     cd libiio
-
-    git checkout v0.25
-
     mkdir build && cd build && cmake ../ && make && sudo make install
 
 
