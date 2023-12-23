@@ -9,6 +9,7 @@ import re
 import ad7476_helper
 from hrtimer import hrtimer as hrt
 
+
 class ad7476a(rx, context_manager):
     """AD7476a 12-Bit, 1Msps Serial Sampling ADC
 
@@ -16,17 +17,17 @@ class ad7476a(rx, context_manager):
         uri: type=string
             URI of IIO context with AD7476a
     """
+
     _complex_data = False
     _rx_channel_names = ["voltage0"]
     _rx_data_si_type = float
     _device_name = ""
 
     def __init__(self, uri="", device_name="", trigger=""):
-
         self.max_sample_rate = 0
         self.spi_max_frequency = 0
         self.hrtimer = None
-        
+
         if trigger != "":
             self.spi_max_frequency, self.max_sample_rate = self.spi_max_f()
 
@@ -56,29 +57,29 @@ class ad7476a(rx, context_manager):
         rx.__init__(self)
 
     def spi_max_f(self):
-        """ find maximum SPI frequency in Devicetree """
-        
-        Devicetree = "/sys/firmware/devicetree/base"        
+        """find maximum SPI frequency in Devicetree"""
+
+        Devicetree = "/sys/firmware/devicetree/base"
         pat = re.compile(r".*ad7476.*spi-max-frequency")
         pat_value = re.compile(r"[0-9a-fA-F]{8}")
 
         fdt = FdtFsParse(Devicetree)
 
-        for (path, node) in fdt.resolve_path('/').walk():
+        for path, node in fdt.resolve_path("/").walk():
             if pat.match(path):
-                spi_f = float.fromhex(''.join(
+                spi_f = float.fromhex("".join(
                     pat_value.findall(node.dts_represent())))
                 max_sr = spi_f / 16.0
         return spi_f, max_sr
 
     @property
     def lsb_mv(self):
-        """ Get the LSB in millivolts """
+        """Get the LSB in millivolts"""
         return self._get_iio_attr("voltage0", "scale", False, self._ctrl)
 
     @property
     def voltage(self):
-        """ Get the voltage reading from the ADC """
+        """Get the voltage reading from the ADC"""
         code = self._get_iio_attr("voltage0", "raw", False, self._ctrl)
         return code * self.lsb_mv / 1000
 
@@ -107,6 +108,7 @@ class ad7476a(rx, context_manager):
 
 if __name__ == "__main__":
     import ad7476
+
     target_device = "ad7476a"
     ADC = ad7476.ad7476a("local:", target_device)
     print(ADC.voltage)

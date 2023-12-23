@@ -1,6 +1,7 @@
 import os
 import time
 
+
 class hrtimer():
     """hrtimer initialization
     parameters:
@@ -18,7 +19,7 @@ class hrtimer():
 
         if not self.trigger:
             raise Exception(f"You did not specify a timer name")
-        
+
         if os.stat(hrtimer_dir).st_gid not in os.getgroups():
             raise Exception(f"You do not have permission to create a trigger")
 
@@ -31,7 +32,7 @@ class hrtimer():
             if not (os.access(self.trigger_dir, os.W_OK)):
                 print(".")
                 time.sleep(0.1)
-            else: 
+            else:
                 break
 
         os.system("echo " + self.trigger + " > " + self.current_trigger)
