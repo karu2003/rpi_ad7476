@@ -1,18 +1,21 @@
-import adi
+import ad7476
 import numpy as np
 
-import ad7476
-
 target_device = "ad7476a"
+samples = 1000
 
-ad7476a_dev = ad7476.ad7476a("ip:analog",target_device)
+sample_rate = 1000000.0
+ADC = ad7476.ad7476a("local:", target_device, "trigger100")
 
-chn = 1
-# ad7476a_dev._rx_data_type = np.int32
-# ad7476a_dev.rx_output_type = "SI"
-ad7476a_dev.rx_enabled_channels = [chn]
-ad7476a_dev.rx_buffer_size = 100
+ADC._rx_data_type = np.int32
 
-data = ad7476a_dev.rx()
+ADC.rx_output_type = "SI"
 
+ADC.rx_buffer_size = samples
+
+if sample_rate > ADC.max_sample_rate:
+    sample_rate = ADC.max_sample_rate
+
+ADC.hrtimer.sample_rate = sample_rate
+data = ADC.rx()
 print(data)
