@@ -28,7 +28,8 @@ class hrtimer():
         os.makedirs(directory, exist_ok=True)
 
         for k in range(10):
-            if (os.access(self.trigger_dir, os.W_OK)):
+            if not (os.access(self.trigger_dir, os.W_OK)):
+                print(".")
                 time.sleep(0.1)
             else: 
                 break
