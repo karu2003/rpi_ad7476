@@ -34,8 +34,7 @@
     sudo modprobe ad7476
     lsmod | grep ad74
     echo ad7476 | sudo tee -a /etc/modules
-    echo iio_trig_sysfs | sudo tee -a /etc/modules
-    echo industrialio-buffer-dma | sudo tee -a /etc/modules
+    echo iio-trig-hrtimer | sudo tee -a /etc/modules
     sudo depmod
 
     dtc -I dts -O dtb rpi-ad7476a-overlay.dts -o rpi-ad7476a-overlay.dtbo
@@ -48,6 +47,15 @@
     dtoverlay=rpi-ad7476a-overlay
     initramfs initrd.img-6.1.65-v8+ followkernel
 
+    sudo cp 87-iio-noroot.rules /etc/udev/rules.d/
+
+    sudo groupadd iio
+    sudo usermod -a -G iio $USER
+    sudo udevadm control --reload-rules
+
+    tree -ifFpugsh '/sys/bus/iio/devices/iio:device0/'
+    tree -ifFpugsh '/sys/kernel/config/iio/triggers/'
+
     sudo reboot
 
 ### ADC testing
@@ -56,39 +64,15 @@
     cat /sys/bus/iio/devices/iio\:device0/in_voltage0_raw 
     cat /sys/bus/iio/devices/iio\:device0/in_voltage_scale
 
-    sudo apt install libiio-utils
-    sudo apt install libiio0
-    sudo apt install iiod
-    sudo apt install python3-libiio
+### Build IIO from git
 
-    modprobe iio_trig_sysfs
+    git clone https://github.com/analogdevicesinc/libiio
 
-    cd /sys/bus/iio/devices/iio_sysfs_trigger
-    echo 123 > add_trigger
+    cd libiio
 
-    cd /sys/bus/iio/devices/trigger0
-    cat name # should give sysfstrig123    
+    git checkout v0.25
 
-    cd /sys/bus/iio/devices/iio:device0
-    echo sysfstrig123 > trigger/current_trigger
-
-    echo 1 > scan_elements/in_voltage0_en
-    echo 1 > buffer/enable
-
-    echo 123 > /sys/bus/iio/devices/iio_sysfs_trigger/add_trigger
-
-    #cat /sys/bus/iio/devices/trigger0/name # should give sysfstrig123
-
-    #echo sysfstrig123 > /sys/bus/iio/devices/iio:device0/trigger/current_trigger
-    
-    # TODO fix udev rules for 'iio' group
-    sudo mkdir /sys/kernel/config/iio/triggers/hrtimer/trigger0
-    echo trigger0 > /sys/bus/iio/devices/iio:device0/trigger/current_trigger
-
-    echo 1 > /sys/bus/iio/devices/iio:device0/scan_elements/in_voltage0_en
-    echo 1 > /sys/bus/iio/devices/iio:device0/buffer/enable
+    mkdir build && cd build && cmake ../ && make && sudo make install
 
 
-https://github.com/jbeale1/data-remote
 
-//IIO_WARNING("X7\n");
