@@ -56,6 +56,12 @@
     tree -ifFpugsh '/sys/bus/iio/devices/iio:device0/'
     tree -ifFpugsh '/sys/kernel/config/iio/triggers/'
 
+    pip install pyqtgraph
+    git clone https://github.com/karu2003/rpi_ad7476
+    git clone https://github.com/analogdevicesinc/pyadi-iio.git
+    cd pyadi-iio
+    pip install .
+
     sudo reboot
 
 ### ADC testing
