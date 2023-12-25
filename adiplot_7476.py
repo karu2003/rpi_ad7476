@@ -20,36 +20,18 @@ from scipy import signal
 import ad7476
 import ad7476_helper
 
-# try:
-#     import genalyzer
-
-#     use_genalyzer = True
-#     print("Using genalyzer :)")
-# except ImportError:
 use_genalyzer = False
 
 pg.setConfigOptions(antialias=True)
 pg.setConfigOption("background", "k")
 
-REAL_DEV_NAME = "ad7476a"  #"cn05".lower()
+REAL_DEV_NAME = "ad7476a"
 
 
 class ADIPlotter(object):
 
-    # def setup_genalyzer(self, fftsize, fs):
-
-    #     bits = 12
-    #     navg = 1
-    #     window = 2
-
-    #     c = genalyzer.config_fftz(fftsize, bits, navg, fftsize, window)
-    #     genalyzer.config_set_sample_rate(fs, c)
-    #     genalyzer.gn_config_fa_auto(ssb_width=120, c=c)
-
-    #     return c
-
     def __init__(self, classname, uri):
-        # self.b, self.a = signal.butter(3, normal_cutoff, btype='high', analog=False)
+
         self.b, self.a = signal.butter(8, 0.4, btype='high', analog=False)
         self.classname = classname
         self.q = Queue(maxsize=20)
@@ -57,21 +39,10 @@ class ADIPlotter(object):
         self.stream = ad7476.ad7476a(uri, classname, "trigger100")
         self.stream.hrtimer.sample_rate = 1000000.0
         self.stream._rx_data_type = np.int32
-        # self.stream.rx_output_type = "SI"
-        # if REAL_DEV_NAME not in classname.lower():
-        #     self.stream.rx_lo = 1000000000
-        #     self.stream.tx_lo = 1000000000
-        #     self.stream.dds_single_tone(3000000, 0.9)
+        self.stream.rx_output_type = "SI"
         self.stream.rx_buffer_size = 2**12
         # self.stream.rx_enabled_channels = [0]
 
-        # if use_genalyzer:
-        #     self.c = self.setup_genalyzer(self.stream.rx_buffer_size,
-        #                                   self.stream.sample_rate)
-        #     self.update_interval = 100
-        #     self.current_count = 0
-
-        # self.app = QtWidgets.QApplication(sys.argv)
         self.app = QApplication(sys.argv)
 
         self.qmw = QtWidgets.QMainWindow()
@@ -192,17 +163,6 @@ class ADIPlotter(object):
             self.custom_table[text].setPos(self.table_x,
                                            self.table_y + scaler * i)
 
-        # if use_genalyzer:
-        #     offset = (len(text_items) + 2) * scaler
-        #     for i, key in enumerate(genalyzer_results):
-        #         self.custom_table[key] = pg.TextItem(text=key)
-        #         self.custom_table[key].setParentItem(parent=self.measurements)
-        #         x_pos = i % 6
-        #         y_pos = np.floor(i // 6)
-        #         self.custom_table[key].setPos(
-        #             self.table_x + x_pos * 300,
-        #             self.table_y + offset + scaler * y_pos)
-
     def update_custom_table(self, genalyzer_updates=None):
         if not self.markers_added:
             return
@@ -210,11 +170,6 @@ class ADIPlotter(object):
             self.curve_point.pos().x()))
         self.custom_table["Amplitude"].setText("Amplitude: {:.2f} dB".format(
             self.curve_point.pos().y()))
-
-        # if use_genalyzer:
-        #     for key in genalyzer_updates:
-        #         self.custom_table[key].setText("{}: {:.2f}".format(
-        #             key, genalyzer_updates[key]))
 
     def update_genalyzer_table(self, table):
         if not self.markers_added:
@@ -259,27 +214,7 @@ class ADIPlotter(object):
                 data_x=self.x,
                 data_y=np.real(wf_data),
             )
-            # if use_genalyzer:
-            #     self.current_count = self.current_count + 1
-            #     if self.current_count >= self.update_interval:
-            #         self.current_count = 0
-            #         # Convert array to list of ints
-            #         i = [int(np.real(a)) for a in wf_data]
-            #         q = [int(np.imag(b)) for b in wf_data]
-            #         fft_out_i, fft_out_q = genalyzer.fftz(i, q, self.c)
-            #         fft_out = [
-            #             val for pair in zip(fft_out_i, fft_out_q)
-            #             for val in pair
-            #         ]
 
-            #         # sp_data = np.array(fft_out_i) + 1j * np.array(fft_out_q)
-            #         # sp_data = np.abs(np.fft.fftshift(sp_data)) / self.stream.rx_buffer_size
-            #         # sp_data = 20 * np.log10(sp_data / (2**11))
-
-            #         # get all Fourier analysis results
-            #         all_results = genalyzer.get_fa_results(fft_out, self.c)
-
-            # else:
             all_results = None
             
             wf_data = signal.filtfilt(self.b, self.a, wf_data)
@@ -291,9 +226,6 @@ class ADIPlotter(object):
             sp_data = 20 * np.log10(sp_data / (2**11))
 
             self.set_plotdata(name="spectrum", data_x=self.f, data_y=sp_data)
-
-            # if use_genalyzer and self.current_count != 0:
-            #     return
 
             if not self.markers_added:
                 self.add_markers(self.traces["spectrum"], all_results)
@@ -318,18 +250,13 @@ class ADIPlotter(object):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        # formatter_class=argparse.ArgumentDefaultsHelpFormatter,
         description='ADI fast plotting app')
     parser.add_argument('--class',
                         help='pyadi class name to use as plot source',
-                        # type=str,
-                        # required=False,
                         default='ad7476a'
                         )
     parser.add_argument('--uri',
                         help='URI of target device',
-                        # type=str,
-                        # required=False,
                         default='local:'
                         )
     args = vars(parser.parse_args())
