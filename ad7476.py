@@ -107,8 +107,10 @@ class ad7476a(rx, context_manager):
 
 
 if __name__ == "__main__":
-    import ad7476
-
+    import ad7476    
+    data = []
     target_device = "ad7476a"
     ADC = ad7476.ad7476a("local:", target_device)
-    print(ADC.voltage)
+    for k in range(10):
+        data.append(ADC.voltage)
+    print(data)

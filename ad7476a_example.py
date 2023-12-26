@@ -4,7 +4,7 @@ import numpy as np
 target_device = "ad7476a"
 samples = 1000
 
-sample_rate = 1000000.0
+sample_rate = 40000.0
 ADC = ad7476.ad7476a("local:", target_device, "trigger100")
 
 ADC._rx_data_type = np.int32

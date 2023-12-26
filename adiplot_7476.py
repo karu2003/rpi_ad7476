@@ -37,8 +37,8 @@ class ADIPlotter(object):
         self.q = Queue(maxsize=20)
         # self.stream = eval("adi." + classname + "(uri='" + uri + "')")
         self.stream = ad7476.ad7476a(uri, classname, "trigger100")
-        self.stream.hrtimer.sample_rate = 1000000.0
-        self.stream._rx_data_type = np.int32
+        self.stream.hrtimer.sample_rate = 25000.0
+        self.stream._rx_data_type = np.int16
         self.stream.rx_output_type = "SI"
         self.stream.rx_buffer_size = 2**12
         # self.stream.rx_enabled_channels = [0]
@@ -67,10 +67,10 @@ class ADIPlotter(object):
         wf_xaxis = pg.AxisItem(orientation="bottom")
         wf_xaxis.setLabel(units="Seconds")
 
-        if REAL_DEV_NAME in classname.lower():
-            wf_ylabels = [(0, "0"), (2**11, "2047")]
-        else:
-            wf_ylabels = [(-2 * 11, "-2047"), (0, "0"), (2**11, "2047")]
+        # if REAL_DEV_NAME in classname.lower():
+        #     wf_ylabels = [(0, "0"), (2**11, "2047")]
+        # else:
+        wf_ylabels = [(-2 * 11, "-2047"), (0, "0"), (2**11, "2047")]
         wf_yaxis = pg.AxisItem(orientation="left")
         wf_yaxis.setTicks([wf_ylabels])
 
@@ -209,6 +209,9 @@ class ADIPlotter(object):
     def update(self):
         while not self.q.empty():
             wf_data = self.q.get()
+            wf_data = wf_data - np.mean(wf_data)
+            # wf_data = signal.filtfilt(self.b, self.a, wf_data)
+
             self.set_plotdata(
                 name="waveform",
                 data_x=self.x,
@@ -216,11 +219,8 @@ class ADIPlotter(object):
             )
 
             all_results = None
-            
-            wf_data = signal.filtfilt(self.b, self.a, wf_data)
 
             sp_data = np.fft.fft(wf_data)
-            # [np.put(sp_data,k, 0.0001) for k in range(6)]
             sp_data = np.abs(
                 np.fft.fftshift(sp_data)) / self.stream.rx_buffer_size
             sp_data = 20 * np.log10(sp_data / (2**11))
