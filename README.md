@@ -76,12 +76,12 @@
     cd libiio
     mkdir build && cd build && cmake ../ && make && sudo make install
 
-https://wiki.analog.com/resources/tools-software/linux-drivers/iio-adc/ad738x
-https://wiki.analog.com/resources/tools-software/linux-drivers/iio-adc/ad7476a
-https://oslongjourney.github.io/linux-kernel/experiment-three-iio-dummy/
-https://github.com/jbeale1/data-remote
-https://wiki.analog.com/resources/tools-software/linux-software/libiio/iio_readdev
-https://wiki.analog.com/resources/tools-software/linux-build/generic/raspberrypi
+    https://wiki.analog.com/resources/tools-software/linux-drivers/iio-adc/ad738x
+    https://wiki.analog.com/resources/tools-software/linux-drivers/iio-adc/ad7476a
+    https://oslongjourney.github.io/linux-kernel/experiment-three-iio-dummy/
+    https://github.com/jbeale1/data-remote
+    https://wiki.analog.com/resources/tools-software/linux-software/libiio/iio_readdev
+    https://wiki.analog.com/resources/tools-software/linux-build/generic/raspberrypi
 
     
 
