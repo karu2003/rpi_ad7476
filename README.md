@@ -89,6 +89,8 @@ https://wiki.analog.com/resources/tools-software/linux-software/libiio/iio_readd
 
 https://wiki.analog.com/resources/tools-software/linux-build/generic/raspberrypi
 
+https://wiki.analog.com/resources/eval/user-guides/ad-fmcdaq2-ebz/software/linux/applications/libiio
+
     
 
 
